@@ -34,7 +34,7 @@ The goals / steps of this project are the following:
 [diag6]: ./examples/diag6.png
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
-###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
 ### Writeup / README
@@ -50,7 +50,7 @@ You're reading it!
 
 I started by reading in all the `vehicle` and `non-vehicle` images. While exploring the dataset, I realized that the size of car and classes is roughly the same. Since in the real world I expect the noncar class to be detected much more often than the car class, I was afraid that the classifier might be prone to detect cars even when there are none. To resolve this, I decide to augment the data set to reduce the overrepresentation of the car class.
 
-I rotated every non car image by 90°, 180° and 270°. On top of that I blurred both car and non car images to prevent the model to learn from noise patterns. This step is contained in code cell 2 of the IPYthon notebook.
+I rotated every non car image by 90°, 180° and 270°. On top of that I blurred both car and non car images to prevent the model to learn from noise patterns. This step is contained in code cell 2 of the IPython notebook.
 
 After the data augmentation, I was left with this data set:
 
@@ -70,7 +70,7 @@ And here of `non-vehicle` class:
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`) to decide on the best features for the classificator.
 
-After trying out different parameters on smaller subsets of the data set, I was getting inconlusive results, so I just decided to brute-force it and really find out, which parameter combination works best.
+After trying out different parameters on smaller subsets of the data set, I was getting inconclusive results, so I just decided to brute-force it and really find out, which parameter combination works best.
 
 I decided to search in the following parameter space:
 
@@ -171,12 +171,12 @@ Here is the ROC curve to investigate the possible TPF/FPR tradeoffs:
 
 ![alt text][roc]
 
-The default threshold value in ```predict``` method is 0, but this can be tweaked. In the end, I decided to keep the value at 0, raising the threshold to decrease false positive rate, also dramatically decreased the true positive rate.
+The default threshold value in ```predict``` method is 0, but this can be tweaked. In the end, I decided to keep the value at 0, because raising the threshold to decrease false positive rate, would also dramatically decreased the true positive rate.
 
 The final performance of my classfier is following:
 
-* Validation accuracy =  0.9918 %
-* Precision =  0.9768 %
+* Validation accuracy = 99.18 %
+* Precision =  97.68 %
 
 
 ### Sliding Window Search
@@ -199,7 +199,7 @@ I searched following windows:
 * 1 row of window size 192x192 px, stride (48, 48) px between rows 458 and 650
 ![alt text][w7]
 
-These windows were selected based on location an size of vehicles in the test images. The stride is defined by the cell site of scale*16px. In some cases I wanted finer step in vertical direction. In those cases two images were displayed, because the HOG features had to be generated twice for that sample.
+These windows were selected based on location an size of vehicles in the test images. The default stride is defined one cell. In some cases I wanted finer step in vertical direction. In those cases two images were displayed, because the HOG features had to be generated twice for that sample.
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
@@ -229,12 +229,6 @@ I defined
 
 I recorded the positions of positive detections in each frame of the video using a custom class (code cell 25). I chose to store the data for 10 frames.  From the positive detections from all stored frames I created a heatmap and then thresholded that map to identify vehicle positions. The threshold remained the same at 5.
 
-To account for the decreasing value of the older detections, the old frames are added to the heatmap with following weights:
-
-Frame (from oldest) | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
----|---|---|---|---|---|---|---|---|---|---
-Weight |0.17 | 0.20 | 0.25 | 0.30 | 0.37 | 0.45 | 0.55 | 0.67 | 0.82 | 1
-
 
 I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected. 
 
@@ -246,7 +240,7 @@ Here's an example result showing the heatmap from a series of frames of video, t
 Standard situation - shows that everything works.
 ![alt text][diag1]
 
-Example of flase positive detections being eliminated by the thresholding.
+Example of false positive detections being eliminated by the thresholding.
 ![alt text][diag2]
 
 Example of no vehicle detections for last 3 frames, yet the resulting bounding box is still constructed from previous frames.
